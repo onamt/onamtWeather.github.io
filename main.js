@@ -65,6 +65,3 @@ document.querySelector(".search-bar").addEventListener("keyup", function (event)
 // Mostrar el clima por defecto al cargar la página
 weather.fetchWeather("Dominican Republic");
 
-
-
-
