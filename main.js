@@ -1,67 +1,71 @@
-// Creamos un objeto llamado weather con una apiKey y dos métodos
 const weather = {
   apiKey: "77d16fbd4a158de046bf36567211164d",
-
-  // Método para hacer una petición a la API y mostrar los datos de la respuesta
-  fetchWeather: async function (city) {
+  
+  // método para obtener el clima
+  fetchWeather: async function(city) {
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${this.apiKey}`
       );
-
-      if (response.status !== 200) {
-        throw new Error("City not found");
-      }
-
       const data = await response.json();
-
       this.displayWeather(data);
     } catch (error) {
-      console.error(error);
-      alert("City not found");
+      console.log(error);
+      alert('Error al obtener el clima.');
     }
   },
-
-  // Método para mostrar los datos del clima en el DOM
-  displayWeather: function (data) {
+  
+  // método para mostrar el clima
+  displayWeather: function(data) {
     const { name } = data;
     const { icon, description } = data.weather[0];
-    const { temp, humidity } = data.main;
+    const { temp, humidity } = data.main; 
     const { speed } = data.wind;
 
-    console.log(name, icon, description, temp, humidity, speed);
-
-    document.querySelector(".city").innerText = name;
-    document.querySelector(".icon").src = `https://openweathermap.org/img/wn/${icon}.png`;
-    document.querySelector(".description").innerText = description;
-    document.querySelector(".temp").innerText = `${Math.floor(temp)}°C`;
-    document.querySelector(".humidity").innerText = `humidity: ${humidity}%`;
-    document.querySelector(".wind").innerText = `wind speed: ${speed}km/h`;
+    document.querySelector(".city").textContent =  name;
+    document.querySelector(".icon").setAttribute("src", `https://openweathermap.org/img/wn/${icon}.png`);
+    document.querySelector(".description").textContent = description ;
+    document.querySelector(".temp").textContent = `${Math.floor(temp)}°C`;
+    document.querySelector(".humidity").textContent = `Humedad: ${humidity}%`;
+    document.querySelector(".wind").textContent = `Velocidad del viento: ${speed} km/h`;
     document.querySelector(".weather").classList.remove("loading");
     document.body.style.backgroundImage = `url('https://source.unsplash.com/1600x900/?${name}')`;
   },
-
-  // Método para buscar el clima de una ciudad ingresada por el usuario
-  search: function () {
-    const city = document.querySelector(".search-bar").value;
-    if (city) {
-      this.fetchWeather(city);
+  
+  // método para buscar el clima
+  search: function() {
+    const searchInput = document.querySelector(".search-bar");
+    const searchValue = searchInput.value.trim();
+    if (searchValue) {
+      this.fetchWeather(searchValue);
+      searchInput.value = '';
+    } else {
+      alert('Ingrese una ciudad para buscar el clima.');
     }
   },
+  
+  // método para borrar el buscador
+  clearSearch: function() {
+    document.querySelector(".search-bar").value = '';
+  }
 };
 
-// Evento al hacer clic en el botón de búsqueda
+// evento para buscar el clima al hacer click en el botón
 document.querySelector(".search button").addEventListener("click", function () {
   weather.search();
 });
 
-// Evento al presionar la tecla Enter en el input de búsqueda
+// evento para buscar el clima al presionar la tecla Enter
 document.querySelector(".search-bar").addEventListener("keyup", function (event) {
   if (event.key === "Enter") {
     weather.search();
   }
 });
 
-// Mostrar el clima por defecto al cargar la página
-weather.fetchWeather("Dominican Republic");
+// evento para borrar el buscador al hacer click en el botón de borrar
+document.querySelector(".search .clear").addEventListener("click", function () {
+  weather.clearSearch();
+});
 
+// obtiene el clima de República Dominicana al cargar la página
+weather.fetchWeather("Dominican Republic");
